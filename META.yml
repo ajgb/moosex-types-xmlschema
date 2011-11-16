@@ -1,0 +1,29 @@
+--- #YAML:1.0
+name:               MooseX-Types-XMLSchema
+version:            0.02
+abstract:           XMLSchema compatible Moose types library 
+author:
+    - Alex J. G. Burzyński <ajgb@cpan.org>
+license:            perl
+distribution_type:  module
+configure_requires:
+    ExtUtils::MakeMaker:  0
+build_requires:
+    ExtUtils::MakeMaker:  0
+requires:
+    DateTime:        0.50
+    Encode:          0
+    IO::Handle:      1.27
+    MIME::Base64:    3.07
+    MooseX::Types:   0.20
+    Regexp::Common:  2.12
+    Test::More:      0.92
+    URI:             1.37
+no_index:
+    directory:
+        - t
+        - inc
+generated_by:       ExtUtils::MakeMaker version 6.56
+meta-spec:
+    url:      http://module-build.sourceforge.net/META-spec-v1.4.html
+    version:  1.4
