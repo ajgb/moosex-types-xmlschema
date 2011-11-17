@@ -18,6 +18,7 @@ WriteMakefile(
         'MIME::Base64' => '3.07',
         'Encode' => 0,
         'DateTime' => '0.50',
+        'DateTime::TimeZone' => 0,
         'IO::Handle' => '1.27',
         'URI' => '1.37',
     },
