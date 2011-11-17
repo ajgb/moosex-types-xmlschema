@@ -51,6 +51,7 @@ use Regexp::Common qw( number );
 use MIME::Base64 qw( encode_base64 );
 use Encode qw( encode );
 use DateTime::Duration;
+use DateTime::TimeZone;
 use DateTime;
 use IO::Handle;
 use URI;
@@ -441,17 +442,26 @@ If you enable coerce you can pass a DateTime object.
 
 subtype 'xs:dateTime' =>
     as 'Str' =>
-        where { /^\d{4}\-\d{2}\-\d{2}T\d{2}:\d{2}:\d{2}Z?(?:[\-\+]\d{2}:?\d{2})?$/ };
+        where { /^\-?\d{4}\-\d{2}\-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?Z?(?:[\-\+]\d{2}:?\d{2})?$/ };
 
 coerce 'xs:dateTime'
     => from 'DateTime' =>
         via {
-            my $tz = $_->strftime("%z");
-            if ($tz) {
-                $tz =~ s/^[\-\+]0000$/Z/ or
-                    $tz =~ s/^([\-\+]\d{2})(\d{2})$/$1:$2/;
+            my $datetime = $_->strftime("%FT%T");
+            if ( my $ns = $_->nanosecond ) {
+                $ns =~ s/0+$//;
+                $datetime .= ".$ns";
             }
-            return $_->strftime("%FT%T$tz");
+            my $tz = $_->time_zone;
+
+            return $datetime if $tz->is_floating;
+            return $datetime .'Z' if $tz->is_utc;
+
+            if ( DateTime::TimeZone->offset_as_string($_->offset) =~
+                /^([\+\-]\d{2})(\d{2})/ ) {
+                return "$datetime$1:$2";
+            }
+            return $datetime;
         };
 
 
@@ -472,12 +482,21 @@ subtype 'xs:time' =>
 coerce 'xs:time'
     => from 'DateTime' =>
         via {
-            my $tz = $_->strftime("%z");
-            if ($tz) {
-                $tz =~ s/^[\-\+]0000$/Z/ or
-                    $tz =~ s/^([\-\+]\d{2})(\d{2})$/$1:$2/;
+            my $time = $_->strftime("%T");
+            if ( my $ns = $_->nanosecond ) {
+                $ns =~ s/0+$//;
+                $time .= ".$ns";
             }
-            return $_->strftime("%T$tz");
+            my $tz = $_->time_zone;
+
+            return $time if $tz->is_floating;
+            return $time .'Z' if $tz->is_utc;
+
+            if ( DateTime::TimeZone->offset_as_string($_->offset) =~
+                /^([\+\-]\d{2})(\d{2})/ ) {
+                return "$time$1:$2";
+            }
+            return $time;
         };
 
 
