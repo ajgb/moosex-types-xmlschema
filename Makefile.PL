@@ -12,7 +12,7 @@ WriteMakefile(
       : ()),
     PL_FILES            => {},
     PREREQ_PM => {
-        'Test::More' => '0.92',
+        'Test::More' => '0.98',
         'MooseX::Types' => '0.20',
         'Regexp::Common' => '2.12',
         'MIME::Base64' => '3.07',
