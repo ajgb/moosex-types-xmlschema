@@ -166,21 +166,33 @@ my $dt2 = DateTime->new( year   => 1964,
                      );
 
 subtest "xs:duration" => sub {
-    plan tests => 8;
+    plan tests => 10;
     dies_ok { $o->duration( '3 years' ) } 'invalid xs:duration <- Str';
     dies_ok { $o->duration( $duration ) } 'invalid xs:duration <- DateTime::Duration';
+
     lives_ok { $o->duration( 'P3Y0M15DT0H0M37S' ) } 'valid xs:duration <- Str';
     is $o->duration, 'P3Y0M15DT0H0M37S', '...value correct';
+
     lives_ok { $o->duration_co( $duration ) } 'valid xs:duration <- DateTime::Duration';
     is $o->duration_co, 'P3Y0M15DT0H0M37S', '...value correct';
+
     lives_ok { $o->duration_co( $dt1 - $dt2 ) } 'valid xs:duration <- DateTime1 - DateTime2';
     is $o->duration_co, '-P0Y2M10DT0H23M37S', '...value correct';
+
+    $duration->add( nanoseconds => 123 );
+    lives_ok { $o->duration_co( $duration ) } 'valid xs:duration <- DateTime::Duration';
+    is $o->duration_co, 'P3Y0M15DT0H0M37.123S', '...value correct';
+    $duration->subtract( nanoseconds => 123 );
 };
 
 subtest "xs:datetime" => sub {
-    plan tests => 8;
+    plan tests => 12;
     lives_ok { $o->datetime( '1964-10-16T16:12:47-05:00' ) } 'valid xs:dateTime <- Str';
     is $o->datetime, '1964-10-16T16:12:47-05:00', '...value correct';
+
+    lives_ok { $o->datetime( '1964-10-16T16:12:47.123-05:00' ) } 'valid xs:dateTime <- Str';
+    is $o->datetime, '1964-10-16T16:12:47.123-05:00', '...value correct';
+
     lives_ok { $o->datetime_co( $dt1 ) } 'valid xs:dateTime <- DateTime';
     is $o->datetime_co, '1964-10-16T16:12:47-05:00', '...value correct';
 
@@ -191,15 +203,29 @@ subtest "xs:datetime" => sub {
     $dt1->set_time_zone('UTC');
     lives_ok { $o->datetime_co( $dt1 ) } 'valid xs:dateTime <- DateTime(UTC)';
     is $o->datetime_co, '1964-10-16T21:12:47Z', '...value correct';
+
+    $dt1->set_nanosecond( 12300 );
+    lives_ok { $o->datetime_co( $dt1 ) } 'valid xs:dateTime <- DateTime(UTC)';
+    is $o->datetime_co, '1964-10-16T21:12:47.123Z', '...value correct';
+    $dt1->set_nanosecond( 0 );
 };
 
 subtest "xs:time" => sub {
-    plan tests => 4;
+    plan tests => 8;
     lives_ok { $o->time( '06:12:47+09:00' ) } 'valid xs:time <- Str';
     is $o->time, '06:12:47+09:00', '...value correct';
+
+    lives_ok { $o->time( '06:12:47.123+09:00' ) } 'valid xs:time <- Str';
+    is $o->time, '06:12:47.123+09:00', '...value correct';
+
     $dt1->set_time_zone('Asia/Tokyo');
     lives_ok { $o->time_co( $dt1 ) } 'valid xs:time <- DateTime';
     is $o->time_co, '06:12:47+09:00', '...value correct';
+
+    $dt1->set_nanosecond( 12300 );
+    lives_ok { $o->time_co( $dt1 ) } 'valid xs:time <- DateTime';
+    is $o->time_co, '06:12:47.123+09:00', '...value correct';
+    $dt1->set_nanosecond( 0 );
 };
 
 subtest "xs:date" => sub {
