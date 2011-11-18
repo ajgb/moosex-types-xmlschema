@@ -406,7 +406,7 @@ If you enable coerce you can pass a DateTime::Duration object.
 
 subtype 'xs:duration' =>
     as 'Str' =>
-        where { /^\-?P\d+Y\d+M\d+DT\d+H\d+M\d+S$/ };
+        where { /^\-?P\d+Y\d+M\d+DT\d+H\d+M\d+(?:\.\d+)?S$/ };
 
 coerce 'xs:duration'
     => from 'DateTime::Duration' =>
@@ -416,7 +416,15 @@ coerce 'xs:duration'
                 $is_negative = 1;
                 $_ = $_->inverse;
             }
-            return sprintf('%sP%dY%dM%dDT%dH%dM%dS',
+            my ($s, $ns) = $_->in_units(qw(
+                seconds
+                nanoseconds
+            ));
+            if ( int($ns) ) {
+                $ns =~ s/0+$//;
+                $s .= ".$ns";
+            }
+            return sprintf('%sP%dY%dM%dDT%dH%dM%sS',
                 $is_negative ? '-' : '',
                 $_->in_units(qw(
                     years
@@ -424,8 +432,8 @@ coerce 'xs:duration'
                     days
                     hours
                     minutes
-                    seconds
-                ))
+                )),
+                $s
             );
         };
 
@@ -477,7 +485,7 @@ If you enable coerce you can pass a DateTime object.
 
 subtype 'xs:time' =>
     as 'Str' =>
-        where { /^\d{2}:\d{2}:\d{2}Z?(?:[\-\+]\d{2}:?\d{2})?$/ };
+        where { /^\d{2}:\d{2}:\d{2}(?:\.[0-9]+)?Z?(?:[\-\+]\d{2}:?\d{2})?$/ };
 
 coerce 'xs:time'
     => from 'DateTime' =>
