@@ -1,5 +1,10 @@
 Revision history for MooseX-Types-XMLSchema
 
+0.03    Sun Nov 20 22:10:27 2011
+        [rt#72474] Missing valid base64 character
+        [rt#72468] Fractional seconds in xs:dateTime
+        Also add fractional seconds to xs:time and xs:duration
+
 0.02    Fri Mar 26 22:31:12 2010
         Package made public.
 
