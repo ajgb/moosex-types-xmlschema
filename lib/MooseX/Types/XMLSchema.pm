@@ -664,7 +664,7 @@ file will be encoded to UTF-8 before encoding with base64.
 
 subtype 'xs:base64Binary' =>
     as 'Str' =>
-        where { $_ =~ /^[a-zA-Z0-9=\+]+$/m };
+        where { $_ =~ /^[a-zA-Z0-9=\+\/]+$/m };
 
 coerce 'xs:base64Binary'
     => from 'IO::Handle' =>
