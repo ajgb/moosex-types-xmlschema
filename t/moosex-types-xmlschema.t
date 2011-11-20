@@ -166,7 +166,7 @@ my $dt2 = DateTime->new( year   => 1964,
                      );
 
 subtest "xs:duration" => sub {
-    plan tests => 10;
+    plan tests => 18;
     dies_ok { $o->duration( '3 years' ) } 'invalid xs:duration <- Str';
     dies_ok { $o->duration( $duration ) } 'invalid xs:duration <- DateTime::Duration';
 
@@ -179,14 +179,23 @@ subtest "xs:duration" => sub {
     lives_ok { $o->duration_co( $dt1 - $dt2 ) } 'valid xs:duration <- DateTime1 - DateTime2';
     is $o->duration_co, '-P0Y2M10DT0H23M37S', '...value correct';
 
-    $duration->add( nanoseconds => 123 );
-    lives_ok { $o->duration_co( $duration ) } 'valid xs:duration <- DateTime::Duration';
-    is $o->duration_co, 'P3Y0M15DT0H0M37.123S', '...value correct';
-    $duration->subtract( nanoseconds => 123 );
+    my @nanosecs = ( 
+        '123' => 'P3Y0M15DT0H0M37.000000123S',
+        '12300' => 'P3Y0M15DT0H0M37.0000123S',
+        '1230000' => 'P3Y0M15DT0H0M37.00123S',
+        '123000000' => 'P3Y0M15DT0H0M37.123S',
+        '1230000000' => 'P3Y0M15DT0H0M38.23S',
+    );
+    while ( my ($ns, $expected) = splice(@nanosecs,0, 2) ) {
+        my $ns_duration = $duration->clone;
+        $ns_duration->add( nanoseconds => $ns );
+        lives_ok { $o->duration_co( $ns_duration ) } 'valid xs:duration <- DateTime::Duration (with ns)';
+        is $o->duration_co, $expected, "...value correct";
+    }
 };
 
 subtest "xs:datetime" => sub {
-    plan tests => 12;
+    plan tests => 20;
     lives_ok { $o->datetime( '1964-10-16T16:12:47-05:00' ) } 'valid xs:dateTime <- Str';
     is $o->datetime, '1964-10-16T16:12:47-05:00', '...value correct';
 
@@ -204,14 +213,23 @@ subtest "xs:datetime" => sub {
     lives_ok { $o->datetime_co( $dt1 ) } 'valid xs:dateTime <- DateTime(UTC)';
     is $o->datetime_co, '1964-10-16T21:12:47Z', '...value correct';
 
-    $dt1->set_nanosecond( 12300 );
-    lives_ok { $o->datetime_co( $dt1 ) } 'valid xs:dateTime <- DateTime(UTC)';
-    is $o->datetime_co, '1964-10-16T21:12:47.123Z', '...value correct';
-    $dt1->set_nanosecond( 0 );
+    my @nanosecs = ( 
+        '123' => '1964-10-16T21:12:47.000000123Z',
+        '12300' => '1964-10-16T21:12:47.0000123Z',
+        '1230000' => '1964-10-16T21:12:47.00123Z',
+        '123000000' => '1964-10-16T21:12:47.123Z',
+        '1230000000' => '1964-10-16T21:12:48.23Z',
+    );
+    while ( my ($ns, $expected) = splice(@nanosecs,0, 2) ) {
+        my $ns_dt = $dt1->clone;
+        $ns_dt->set_nanosecond( $ns );
+        lives_ok { $o->datetime_co( $ns_dt ) } 'valid xs:dateTime <- DateTime (with ns)';
+        is $o->datetime_co, $expected, '...value correct';
+    }
 };
 
 subtest "xs:time" => sub {
-    plan tests => 8;
+    plan tests => 16;
     lives_ok { $o->time( '06:12:47+09:00' ) } 'valid xs:time <- Str';
     is $o->time, '06:12:47+09:00', '...value correct';
 
@@ -222,10 +240,19 @@ subtest "xs:time" => sub {
     lives_ok { $o->time_co( $dt1 ) } 'valid xs:time <- DateTime';
     is $o->time_co, '06:12:47+09:00', '...value correct';
 
-    $dt1->set_nanosecond( 12300 );
-    lives_ok { $o->time_co( $dt1 ) } 'valid xs:time <- DateTime';
-    is $o->time_co, '06:12:47.123+09:00', '...value correct';
-    $dt1->set_nanosecond( 0 );
+    my @nanosecs = ( 
+        '123' => '06:12:47.000000123+09:00',
+        '12300' => '06:12:47.0000123+09:00',
+        '1230000' => '06:12:47.00123+09:00',
+        '123000000' => '06:12:47.123+09:00',
+        '1230000000' => '06:12:48.23+09:00',
+    );
+    while ( my ($ns, $expected) = splice(@nanosecs,0, 2) ) {
+        my $ns_dt = $dt1->clone;
+        $ns_dt->set_nanosecond( $ns );
+        lives_ok { $o->time_co( $ns_dt ) } 'valid xs:time <- DateTime (with ns)';
+        is $o->time_co, $expected, '...value correct';
+    }
 };
 
 subtest "xs:date" => sub {

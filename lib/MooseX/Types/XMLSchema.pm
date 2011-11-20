@@ -421,8 +421,8 @@ coerce 'xs:duration'
                 nanoseconds
             ));
             if ( int($ns) ) {
-                $ns =~ s/0+$//;
-                $s .= ".$ns";
+                $s = sprintf("%d.%09d", $s, $ns);
+                $s =~ s/0+$//;
             }
             return sprintf('%sP%dY%dM%dDT%dH%dM%sS',
                 $is_negative ? '-' : '',
@@ -455,11 +455,8 @@ subtype 'xs:dateTime' =>
 coerce 'xs:dateTime'
     => from 'DateTime' =>
         via {
-            my $datetime = $_->strftime("%FT%T");
-            if ( my $ns = $_->nanosecond ) {
-                $ns =~ s/0+$//;
-                $datetime .= ".$ns";
-            }
+            my $datetime = $_->strftime( $_->nanosecond ? "%FT%T.%N" : "%FT%T");
+            $datetime =~ s/0+$// if $_->nanosecond;
             my $tz = $_->time_zone;
 
             return $datetime if $tz->is_floating;
@@ -485,16 +482,13 @@ If you enable coerce you can pass a DateTime object.
 
 subtype 'xs:time' =>
     as 'Str' =>
-        where { /^\d{2}:\d{2}:\d{2}(?:\.[0-9]+)?Z?(?:[\-\+]\d{2}:?\d{2})?$/ };
+        where { /^\d{2}:\d{2}:\d{2}(?:\.\d+)?Z?(?:[\-\+]\d{2}:?\d{2})?$/ };
 
 coerce 'xs:time'
     => from 'DateTime' =>
         via {
-            my $time = $_->strftime("%T");
-            if ( my $ns = $_->nanosecond ) {
-                $ns =~ s/0+$//;
-                $time .= ".$ns";
-            }
+            my $time = $_->strftime( $_->nanosecond ? "%T.%N" : "%T");
+            $time =~ s/0+$// if $_->nanosecond;
             my $tz = $_->time_zone;
 
             return $time if $tz->is_floating;
