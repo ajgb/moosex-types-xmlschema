@@ -8,4 +8,3 @@ t/00-load.t
 t/pod-coverage.t
 t/pod.t
 t/moosex-types-xmlschema.t
-META.yml                                 Module meta-data (added by MakeMaker)
