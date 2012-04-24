@@ -11,13 +11,13 @@ use MooseX::Types -declare => [qw(
     xs:negativeInteger
     xs:nonNegativeInteger
     xs:long
-    xs:unsignedLong 
+    xs:unsignedLong
     xs:int
     xs:unsignedInt
-    xs:short 
-    xs:unsignedShort 
-    xs:byte 
-    xs:unsignedByte 
+    xs:short
+    xs:unsignedShort
+    xs:byte
+    xs:unsignedByte
     xs:boolean
     xs:float
     xs:double
@@ -55,16 +55,17 @@ use DateTime::TimeZone;
 use DateTime;
 use IO::Handle;
 use URI;
-
+use Math::BigInt;
+use Math::BigFloat;
 
 
 =head1 NAME
 
-MooseX::Types::XMLSchema - XMLSchema compatible Moose types library 
+MooseX::Types::XMLSchema - XMLSchema compatible Moose types library
 
 =cut
 
-our $VERSION = '0.03';
+our $VERSION = '0.04';
 
 
 =head1 SYNOPSIS
@@ -121,7 +122,7 @@ Then, elsewhere:
 
     my $object = My::Class->new(
         string          => 'string',
-        decimal         => 20.12,
+        decimal         => Math::BigFloat->new(20.12),
         duration_dt     => DateTime->now - DateTime->(year => 1990),
         base64Binary_io => IO::File->new($0),
     );
@@ -168,7 +169,7 @@ subtype 'xs:integer' =>
     as 'Math::BigInt',
     where { ! $_->is_nan && ! $_->is_inf };
 
-coerce 'xs:integer' => from 'Int', via { new Math::BigInt $_ };
+coerce 'xs:integer' => from 'Int', via { Math::BigInt->new($_) };
 
 =head2 xs:positiveInteger
 
@@ -185,7 +186,7 @@ This is defined in XSchema to be an arbitrary size integer greater than zero.
 =cut
 
 subtype 'xs:positiveInteger' => as 'Math::BigInt', where { $_ > 0 };
-coerce 'xs:positiveInteger' => from 'Int', via { new Math::BigInt $_ };
+coerce 'xs:positiveInteger' => from 'Int', via { Math::BigInt->new($_) };
 
 =head2 xs:nonPositiveInteger
 
@@ -203,7 +204,7 @@ to zero.
 =cut
 
 subtype 'xs:nonPositiveInteger' => as 'Math::BigInt', where { $_ <= 0 };
-coerce 'xs:nonPositiveInteger' => from 'Int', via { new Math::BigInt $_ };
+coerce 'xs:nonPositiveInteger' => from 'Int', via { Math::BigInt->new($_) };
 
 =head2 xs:negativeInteger
 
@@ -220,7 +221,7 @@ This is defined in XSchema to be an arbitrary size integer less than zero.
 =cut
 
 subtype 'xs:negativeInteger' => as 'Math::BigInt', where { $_ < 0 };
-coerce 'xs:negativeInteger' => from 'Int', via { new Math::BigInt $_ };
+coerce 'xs:negativeInteger' => from 'Int', via { Math::BigInt->new($_) };
 
 =head2 xs:nonNegativeInteger
 
@@ -234,38 +235,38 @@ equal to zero.
 
 =cut
 
-subtype 'xs:nonNegativeInteger' => 
+subtype 'xs:nonNegativeInteger' =>
     as 'Math::BigInt',
         where { $_ >= 0 };
-coerce 'xs:nonNegativeInteger' => from 'Int', via { new Math::BigInt $_ };
+coerce 'xs:nonNegativeInteger' => from 'Int', via { Math::BigInt->new($_) };
 
 =head2 xs:long
 
     has 'long' => ( is => 'rw', isa => 'xs:long' );
 
 A 64-bit Integer. Represented as a L<Math::Bigint> object, but limited to the
-64-bit (signed) range.
+64-bit (signed) range. Set to coerce from Int.
 
 =cut
 
 subtype 'xs:long' =>
     as 'Math::BigInt',
         where { $_ <= 9223372036854775807 && $_ > -9223372036854775808 };
-coerce 'xs:long' => from 'Int', via { new Math::BigInt $_ };
+coerce 'xs:long' => from 'Int', via { Math::BigInt->new($_) };
 
 =head2 xs:unsignedLong
 
     has 'long' => ( is => 'rw', isa => 'xs:unsignedLong' );
 
 A 64-bit Integer. Represented as a L<Math::Bigint> object, but limited to the
-64-bit (unsigned) range.
+64-bit (unsigned) range. Set to coerce from Int.
 
 =cut
 
-subtype 'xs:unsignedLong' => 
+subtype 'xs:unsignedLong' =>
     as 'Math::BigInt',
         where { $_ >= 0 && $_ <= 18446744073709551615 };
-coerce 'xs:unsignedLong' => from 'Int', via { new Math::BigInt $_ };
+coerce 'xs:unsignedLong' => from 'Int', via { Math::BigInt->new($_) };
 
 =head2 xs:int
 
@@ -299,7 +300,7 @@ A 16-bit integer. Represented natively.
 
 =cut
 
-subtype 'xs:short' => 
+subtype 'xs:short' =>
     as 'Int',
         where { $_ <= 32767 && $_ >= -32768 };
 
@@ -311,7 +312,7 @@ A 16-bit integer. Represented natively.
 
 =cut
 
-subtype 'xs:unsignedShort' => 
+subtype 'xs:unsignedShort' =>
     as 'Int',
         where { $_ <= 65535 && $_ >= 0 };
 
@@ -323,7 +324,7 @@ An 8-bit integer. Represented natively.
 
 =cut
 
-subtype 'xs:byte' => 
+subtype 'xs:byte' =>
     as 'Int',
         where { $_ <= 127 && $_ >= -128 };
 
@@ -335,7 +336,7 @@ An 8-bit integer. Represented natively.
 
 =cut
 
-subtype 'xs:unsignedByte' => 
+subtype 'xs:unsignedByte' =>
     as 'Int',
         where { $_ <= 255 && $_ >= 0 };
 
@@ -363,35 +364,35 @@ A 64-bit Float. Represented as a L<Math::BigFloat> object, but limited to the
 subtype 'xs:float' =>
     as 'Math::BigFloat',
     where { ! $_->is_nan && ! $_->is_inf };
-coerce 'xs:float' => from 'Num', via { new Math::BigFloat $_ };
+coerce 'xs:float' => from 'Num', via { Math::BigFloat->new($_) };
 
 =head2 xs:double
 
     has 'double'       => ( is => 'rw', isa => 'xs:double' );
 
 A 64-bit Float. Represented as a L<Math::BigFloat> object, but limited to the
-64-bit (unsigned) range.
+64-bit (unsigned) range. Set to coerce from Num.
 
 =cut
 
 subtype 'xs:double' =>
     as 'Math::BigFloat',
     where { ! $_->is_nan && ! $_->is_inf };
-coerce 'xs:double' => from 'Num', via { new Math::BigFloat $_ };
+coerce 'xs:double' => from 'Num', via { Math::BigFloat->new($_) };
 
 =head2 xs:decimal
 
     has 'decimal'      => ( is => 'rw', isa => 'xs:decimal' );
 
 A 64-bit Float. Represented as a L<Math::BigFloat> object, but limited to the
-64-bit (unsigned) range.
+64-bit (unsigned) range. Set to coerce from Num.
 
 =cut
 
 subtype 'xs:decimal' =>
     as 'Math::BigFloat',
     where { ! $_->is_nan && ! $_->is_inf };
-coerce 'xs:decimal' => from 'Num', via { new Math::BigFloat $_ };
+coerce 'xs:decimal' => from 'Num', via { Math::BigFloat->new($_) };
 
 
 =head2 xs:duration
@@ -535,7 +536,7 @@ integers.
 =cut
 
 subtype '__xs:IntPair' =>
-    as 'ArrayRef[Int]' => 
+    as 'ArrayRef[Int]' =>
         where { @$_ == 2 };
 
 
@@ -751,6 +752,16 @@ no Moose::Util::TypeConstraints;
 no Moose;
 
 
+=head1 SEE ALSO
+
+=over 4
+
+=item * Enable attributes coercion automatically with
+
+L<MooseX::AlwaysCoerce>
+
+=back
+
 =head1 AUTHOR
 
 Alex J. G. Burzyński, C<< <ajgb at cpan.org> >>
@@ -764,7 +775,7 @@ automatically be notified of progress on your bug as I make changes.
 
 =head1 COPYRIGHT & LICENSE
 
-Copyright 2009 Alex J. G. Burzyński.
+Copyright 2009-2012 Alex J. G. Burzyński.
 
 This program is free software; you can redistribute it and/or modify it
 under the terms of either: the GNU General Public License as published

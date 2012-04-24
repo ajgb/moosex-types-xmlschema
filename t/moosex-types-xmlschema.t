@@ -27,9 +27,9 @@ use URI;
     has 'float'        => ( is => 'rw', isa => 'xs:float' );
     has 'double'       => ( is => 'rw', isa => 'xs:double' );
     has 'decimal'      => ( is => 'rw', isa => 'xs:decimal' );
-    has 'float_co'        => ( is => 'rw', isa => 'xs:float', coerce => 1 );
-    has 'double_co'       => ( is => 'rw', isa => 'xs:double', coerce => 1 );
-    has 'decimal_co'      => ( is => 'rw', isa => 'xs:decimal', coerce => 1 );
+    has 'float_co'     => ( is => 'rw', isa => 'xs:float', coerce => 1 );
+    has 'double_co'    => ( is => 'rw', isa => 'xs:double', coerce => 1 );
+    has 'decimal_co'   => ( is => 'rw', isa => 'xs:decimal', coerce => 1 );
 
     has 'duration'     => ( is => 'rw', isa => 'xs:duration' );
     has 'datetime'     => ( is => 'rw', isa => 'xs:dateTime' );
@@ -51,11 +51,11 @@ use URI;
     has 'gDay_co'         => ( is => 'rw', isa => 'xs:gDay', coerce => 1 );
     has 'gMonth_co'       => ( is => 'rw', isa => 'xs:gMonth', coerce => 1 );
 
-    has 'base64Binary' => ( is => 'rw', isa => 'xs:base64Binary' );
+    has 'base64Binary'    => ( is => 'rw', isa => 'xs:base64Binary' );
     has 'base64Binary_co' => ( is => 'rw', isa => 'xs:base64Binary', coerce => 1 );
 
-    has 'anyURI'       => ( is => 'rw', isa => 'xs:anyURI' );
-    has 'anyURI_uri'       => ( is => 'rw', isa => 'xs:anyURI', coerce => 1 );
+    has 'anyURI'          => ( is => 'rw', isa => 'xs:anyURI' );
+    has 'anyURI_uri'      => ( is => 'rw', isa => 'xs:anyURI', coerce => 1 );
 
     has 'nonPositiveInteger' => ( is => 'rw', isa => 'xs:nonPositiveInteger' );
     has 'positiveInteger'    => ( is => 'rw', isa => 'xs:positiveInteger' );
@@ -84,7 +84,7 @@ subtest "xs:int" => sub {
 
 subtest "xs:integer" => sub {
     plan tests => 8;
-    lives_ok { $o->integer( new Math::BigInt 123 ) } 'valid xs:integer <- Math::BigInt(123)';
+    lives_ok { $o->integer( Math::BigInt->new(123) ) } 'valid xs:integer <- Math::BigInt(123)';
     is $o->integer, 123, '...value correct';
     lives_ok { $o->integer_co( 123 ) } 'valid xs:integer <- 123 (coerce)';
     is $o->integer, 123, '...value correct';
@@ -113,33 +113,33 @@ subtest "xs:boolean" => sub {
 
 subtest "xs:float" => sub {
     plan tests => 7;
-    lives_ok { $o->float( new Math::BigFloat 123.4567) } 'valid xs:float <- 123.4567';
+    lives_ok { $o->float( Math::BigFloat->new(123.4567) ) } 'valid xs:float <- Math::BigFloat(123.4567)';
     is $o->float, 123.4567, '...value correct';
     lives_ok { $o->float_co(123.4567) } 'valid xs:float <- 123.4567 (coerce)';
     is $o->float_co, 123.4567, '...value correct';
-    lives_ok { $o->float( new Math::BigFloat 12.78e-2) } 'valid xs:float <- 12.78e-2';
+    lives_ok { $o->float( Math::BigFloat->new(12.78e-2) ) } 'valid xs:float <- Math::BigFloat(12.78e-2)';
     is $o->float, 12.78e-2, '...value correct';
     dies_ok { $o->float_co( '12.78f-2') } 'invalid xs:float <- 12.78f-2';
 };
 
 subtest "xs:double" => sub {
     plan tests => 7;
-    lives_ok { $o->double( new Math::BigFloat 123.4567) } 'valid xs:double <- 123.4567';
+    lives_ok { $o->double( Math::BigFloat->new(123.4567) ) } 'valid xs:double <- Math::BigFloat(123.4567)';
     is $o->double, 123.4567, '...value correct';
     lives_ok { $o->double_co(123.4567) } 'valid xs:double <- 123.4567 (coerce)';
     is $o->double, 123.4567, '...value correct';
-    lives_ok { $o->double( new Math::BigFloat 12.78e-2) } 'valid xs:double <- 12.78e-2';
+    lives_ok { $o->double( Math::BigFloat->new(12.78e-2) ) } 'valid xs:double <- Math::BigFloat(12.78e-2)';
     is $o->double, 12.78e-2, '...value correct';
-    dies_ok { $o->double( new Math::BigFloat '12.78f-2') } 'invalid xs:double <- 12.78f-2';
+    dies_ok { $o->double( Math::BigFloat->new('12.78f-2') ) } 'invalid xs:double <- 12.78f-2';
 };
 
 subtest "xs:decimal" => sub {
     plan tests => 6;
-    lives_ok { $o->decimal( new Math::BigFloat 123.45) } 'valid xs:decimal <- 123.45';
+    lives_ok { $o->decimal( Math::BigFloat->new(123.45)) } 'valid xs:decimal <- Math::BigFloat(123.45)';
     is $o->decimal, 123.45, '...value correct';
     lives_ok { $o->decimal_co(123.45) } 'valid xs:decimal <- 123.45 (coerce)';
     is $o->decimal, 123.45, '...value correct';
-    lives_ok { $o->decimal( new Math::BigFloat 12.3456e+2) } 'valid xs:decimal <- 12.3456e+2';
+    lives_ok { $o->decimal( Math::BigFloat->new(12.3456e+2) ) } 'valid xs:decimal <- Math::BigFloat(12.3456e+2)';
     is $o->decimal, 12.3456e+2, '...value correct';
 };
 
@@ -179,7 +179,7 @@ subtest "xs:duration" => sub {
     lives_ok { $o->duration_co( $dt1 - $dt2 ) } 'valid xs:duration <- DateTime1 - DateTime2';
     is $o->duration_co, '-P0Y2M10DT0H23M37S', '...value correct';
 
-    my @nanosecs = ( 
+    my @nanosecs = (
         '123' => 'P3Y0M15DT0H0M37.000000123S',
         '12300' => 'P3Y0M15DT0H0M37.0000123S',
         '1230000' => 'P3Y0M15DT0H0M37.00123S',
@@ -213,7 +213,7 @@ subtest "xs:datetime" => sub {
     lives_ok { $o->datetime_co( $dt1 ) } 'valid xs:dateTime <- DateTime(UTC)';
     is $o->datetime_co, '1964-10-16T21:12:47Z', '...value correct';
 
-    my @nanosecs = ( 
+    my @nanosecs = (
         '123' => '1964-10-16T21:12:47.000000123Z',
         '12300' => '1964-10-16T21:12:47.0000123Z',
         '1230000' => '1964-10-16T21:12:47.00123Z',
@@ -240,7 +240,7 @@ subtest "xs:time" => sub {
     lives_ok { $o->time_co( $dt1 ) } 'valid xs:time <- DateTime';
     is $o->time_co, '06:12:47+09:00', '...value correct';
 
-    my @nanosecs = ( 
+    my @nanosecs = (
         '123' => '06:12:47.000000123+09:00',
         '12300' => '06:12:47.0000123+09:00',
         '1230000' => '06:12:47.00123+09:00',
