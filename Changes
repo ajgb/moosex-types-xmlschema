@@ -1,5 +1,9 @@
 Revision history for MooseX-Types-XMLSchema
 
+0.04    Tue Apr 24 21:49:13 2012
+        [rt#76789] Example use of xs:decimal invalid
+        Require Math::BigInt and Math::BigFloat.
+
 0.03    Sun Nov 20 22:10:27 2011
         [rt#72474] Missing valid base64 character
         [rt#72468] Fractional seconds in xs:dateTime
