@@ -1,6 +1,8 @@
 Revision history for MooseX-Types-XMLSchema
 
 {{$NEXT}}
+
+0.05   2012-06-16 00:54:18
     [rt#77810/gh#1] Allow timezone in xs:date string by IVANWILLS
     Coerced DateTime object will include timezone in xs:date
     Added extra tests
