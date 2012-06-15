@@ -198,7 +198,7 @@ subtest "xs:duration" => sub {
 };
 
 subtest "xs:datetime" => sub {
-    plan tests => 20;
+    plan tests => 22;
     my $ldt1 = $dt1->clone;
 
     lives_ok { $o->datetime( '1964-10-16T16:12:47-05:00' ) } 'valid xs:dateTime <- Str';
@@ -231,10 +231,14 @@ subtest "xs:datetime" => sub {
         lives_ok { $o->datetime_co( $ns_dt ) } 'valid xs:dateTime <- DateTime (with ns)';
         is $o->datetime_co, $expected, '...value correct';
     }
+
+    $ldt1->set_time_zone('floating');
+    lives_ok { $o->datetime_co( $ldt1 ) } 'valid xs:dateTime <- DateTime(floating)';
+    is $o->datetime_co, '1964-10-16T21:12:47', '...value correct';
 };
 
 subtest "xs:time" => sub {
-    plan tests => 16;
+    plan tests => 20;
     my $ldt1 = $dt1->clone;
 
     lives_ok { $o->time( '06:12:47+09:00' ) } 'valid xs:time <- Str';
@@ -244,7 +248,7 @@ subtest "xs:time" => sub {
     is $o->time, '06:12:47.123+09:00', '...value correct';
 
     $ldt1->set_time_zone('Asia/Tokyo');
-    lives_ok { $o->time_co( $ldt1 ) } 'valid xs:time <- DateTime';
+    lives_ok { $o->time_co( $ldt1 ) } 'valid xs:time <- DateTime(Tokyo)';
     is $o->time_co, '06:12:47+09:00', '...value correct';
 
     my @nanosecs = (
@@ -260,6 +264,14 @@ subtest "xs:time" => sub {
         lives_ok { $o->time_co( $ns_dt ) } 'valid xs:time <- DateTime (with ns)';
         is $o->time_co, $expected, '...value correct';
     }
+
+    $ldt1->set_time_zone('UTC');
+    lives_ok { $o->time_co( $ldt1 ) } 'valid xs:time <- DateTime(UTC)';
+    is $o->time_co, '21:12:47Z', '...value correct';
+
+    $ldt1->set_time_zone('floating');
+    lives_ok { $o->time_co( $ldt1 ) } 'valid xs:time <- DateTime(floating)';
+    is $o->time_co, '21:12:47', '...value correct';
 };
 
 subtest "xs:date" => sub {
