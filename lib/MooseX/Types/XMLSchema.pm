@@ -63,11 +63,6 @@ use Math::BigFloat;
 
 MooseX::Types::XMLSchema - XMLSchema compatible Moose types library
 
-=cut
-
-our $VERSION = '0.04';
-
-
 =head1 SYNOPSIS
 
     package My::Class;
