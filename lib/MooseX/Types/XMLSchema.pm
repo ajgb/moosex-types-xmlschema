@@ -515,7 +515,7 @@ If you enable coerce you can pass a DateTime object.
 
 subtype 'xs:date' =>
     as 'Str' =>
-        where { /^\d{4}\-\d{2}\-\d{2}$/ };
+        where { /^\d{4}\-\d{2}\-\d{2}(?:[+-]\d{2}:\d{2})?$/ };
 
 coerce 'xs:date'
     => from 'DateTime' =>

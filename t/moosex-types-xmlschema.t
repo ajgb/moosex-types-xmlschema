@@ -256,12 +256,16 @@ subtest "xs:time" => sub {
 };
 
 subtest "xs:date" => sub {
-    plan tests => 4;
+    plan tests => 8;
     lives_ok { $o->date( '1964-10-16' ) } 'valid xs:date <- Str';
     is $o->date, '1964-10-16', '...value correct';
     $dt1->set_time_zone('UTC');
     lives_ok { $o->date_co( $dt1 ) } 'valid xs:date <- DateTime';
     is $o->date_co, '1964-10-16', '...value correct';
+    lives_ok { $o->date( '1964-10-16+10:00' ) } 'valid xs:date <- Str with +ve timezone';
+    is $o->date, '1964-10-16+10:00', '...value correct';
+    lives_ok { $o->date( '1964-10-16-06:15' ) } 'valid xs:date <- Str with -ve timezone';
+    is $o->date, '1964-10-16-06:15', '...value correct';
 };
 
 subtest "xs:gYearMonth" => sub {
