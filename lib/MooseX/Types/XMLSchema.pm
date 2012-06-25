@@ -438,7 +438,7 @@ coerce 'xs:duration'
             );
         };
 
-=head2 xs:datetime
+=head2 xs:dateTime
 
     has 'datetime'    => ( is => 'rw', isa => 'xs:dateTime' );
     has 'datetime_dt' => ( is => 'rw', isa => 'xs:dateTime', coerce => 1 );
