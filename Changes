@@ -1,5 +1,17 @@
 Revision history for MooseX-Types-XMLSchema
 
+{{$NEXT}}
+    FIXES:
+        [rt#77879] Fix typo in xs:dateTime pod.
+    ENHANCEMENTS:
+        Add missing types in synopsis.
+        Add more tests.
+        All Math::BigInt/BigFloat objects also coerce from Str.
+    NOTICES:
+       xs:positiveInteger, xs:nonPositiveInteger, xs:negativeInteger,
+       xs:nonNegativeInteger are Math::BigInt objects now (due to removing
+       their duplicated versions).  
+
 0.04    Tue Apr 24 21:49:13 2012
         [rt#76789] Example use of xs:decimal invalid
         Require Math::BigInt and Math::BigFloat.
