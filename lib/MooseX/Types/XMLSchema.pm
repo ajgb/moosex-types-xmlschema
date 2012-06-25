@@ -77,61 +77,43 @@ our $VERSION = '0.04';
     has 'byte'         => ( is => 'rw', isa => 'xs:byte' );
     has 'short'        => ( is => 'rw', isa => 'xs:short' );
     has 'int'          => ( is => 'rw', isa => 'xs:int' );
-    has 'long'         => ( is => 'rw', isa => 'xs:long' );
-    has 'integer'      => ( is => 'rw', isa => 'xs:integer' );
-    has 'float'        => ( is => 'rw', isa => 'xs:float' );
-    has 'double'       => ( is => 'rw', isa => 'xs:double' );
-    has 'decimal'      => ( is => 'rw', isa => 'xs:decimal' );
+    has 'long'         => ( is => 'rw', isa => 'xs:long', coerce => 1 );
+    has 'integer'      => ( is => 'rw', isa => 'xs:integer', coerce => 1 );
+    has 'float'        => ( is => 'rw', isa => 'xs:float', coerce => 1 );
+    has 'double'       => ( is => 'rw', isa => 'xs:double', coerce => 1 );
+    has 'decimal'      => ( is => 'rw', isa => 'xs:decimal', coerce => 1 );
 
-    has 'long_co'      => ( is => 'rw', isa => 'xs:long', coerce => 1 );
-    has 'integer_co'   => ( is => 'rw', isa => 'xs:integer', coerce => 1 );
-    has 'float_co'     => ( is => 'rw', isa => 'xs:float', coerce => 1 );
-    has 'double_co'    => ( is => 'rw', isa => 'xs:double', coerce => 1 );
-    has 'decimal_co'   => ( is => 'rw', isa => 'xs:decimal', coerce => 1 );
+    has 'duration'     => ( is => 'rw', isa => 'xs:duration', coerce => 1 );
+    has 'datetime'     => ( is => 'rw', isa => 'xs:dateTime', coerce => 1 );
+    has 'time'         => ( is => 'rw', isa => 'xs:time', coerce => 1 );
+    has 'date'         => ( is => 'rw', isa => 'xs:date', coerce => 1 );
+    has 'gYearMonth'   => ( is => 'rw', isa => 'xs:gYearMonth', coerce => 1 );
+    has 'gYear'        => ( is => 'rw', isa => 'xs:gYear', coerce => 1 );
+    has 'gMonthDay'    => ( is => 'rw', isa => 'xs:gMonthDay', coerce => 1 );
+    has 'gDay'         => ( is => 'rw', isa => 'xs:gDay', coerce => 1 );
+    has 'gMonth'       => ( is => 'rw', isa => 'xs:gMonth', coerce => 1 );
 
-    has 'duration'     => ( is => 'rw', isa => 'xs:duration' );
-    has 'datetime'     => ( is => 'rw', isa => 'xs:dateTime' );
-    has 'time'         => ( is => 'rw', isa => 'xs:time' );
-    has 'date'         => ( is => 'rw', isa => 'xs:date' );
-    has 'gYearMonth'   => ( is => 'rw', isa => 'xs:gYearMonth' );
-    has 'gYear'        => ( is => 'rw', isa => 'xs:gYear' );
-    has 'gMonthDay'    => ( is => 'rw', isa => 'xs:gMonthDay' );
-    has 'gDay'         => ( is => 'rw', isa => 'xs:gDay' );
-    has 'gMonth'       => ( is => 'rw', isa => 'xs:gMonth' );
+    has 'base64Binary' => ( is => 'rw', isa => 'xs:base64Binary', coerce => 1 );
 
-    has 'duration_dt'     => ( is => 'rw', isa => 'xs:duration', coerce => 1 );
-    has 'datetime_dt'     => ( is => 'rw', isa => 'xs:dateTime', coerce => 1 );
-    has 'time_dt'         => ( is => 'rw', isa => 'xs:time', coerce => 1 );
-    has 'date_dt'         => ( is => 'rw', isa => 'xs:date', coerce => 1 );
-    has 'gYearMonth_dt'   => ( is => 'rw', isa => 'xs:gYearMonth', coerce => 1 );
-    has 'gYear_dt'        => ( is => 'rw', isa => 'xs:gYear', coerce => 1 );
-    has 'gMonthDay_dt'    => ( is => 'rw', isa => 'xs:gMonthDay', coerce => 1 );
-    has 'gDay_dt'         => ( is => 'rw', isa => 'xs:gDay', coerce => 1 );
-    has 'gMonth_dt'       => ( is => 'rw', isa => 'xs:gMonth', coerce => 1 );
+    has 'anyURI'            => ( is => 'rw', isa => 'xs:anyURI', coerce => 1 );
 
-    has 'base64Binary'    => ( is => 'rw', isa => 'xs:base64Binary' );
-    has 'base64Binary_io' => ( is => 'rw', isa => 'xs:base64Binary', coerce => 1 );
-
-    has 'anyURI'            => ( is => 'rw', isa => 'xs:anyURI' );
-    has 'anyURI_uri'        => ( is => 'rw', isa => 'xs:anyURI', coerce => 1 );
-
-    has 'nonPositiveInteger' => ( is => 'rw', isa => 'xs:nonPositiveInteger' );
-    has 'positiveInteger'    => ( is => 'rw', isa => 'xs:positiveInteger' );
-    has 'nonNegativeInteger' => ( is => 'rw', isa => 'xs:nonNegativeInteger' );
-    has 'negativeInteger'    => ( is => 'rw', isa => 'xs:negativeInteger' );
+    has 'nonPositiveInteger' => ( is => 'rw', isa => 'xs:nonPositiveInteger', coerce => 1 );
+    has 'positiveInteger'    => ( is => 'rw', isa => 'xs:positiveInteger', coerce => 1 );
+    has 'nonNegativeInteger' => ( is => 'rw', isa => 'xs:nonNegativeInteger', coerce => 1 );
+    has 'negativeInteger'    => ( is => 'rw', isa => 'xs:negativeInteger', coerce => 1 );
 
     has 'unsignedByte'    => ( is => 'rw', isa => 'xs:unsignedByte' );
     has 'unsignedShort'   => ( is => 'rw', isa => 'xs:unsignedShort' );
     has 'unsignedInt'     => ( is => 'rw', isa => 'xs:unsignedInt' );
-    has 'unsignedLong'    => ( is => 'rw', isa => 'xs:unsignedLong' );
+    has 'unsignedLong'    => ( is => 'rw', isa => 'xs:unsignedLong', coerce => 1 );
 
 Then, elsewhere:
 
     my $object = My::Class->new(
         string          => 'string',
         decimal         => Math::BigFloat->new(20.12),
-        duration_dt     => DateTime->now - DateTime->(year => 1990),
-        base64Binary_io => IO::File->new($0),
+        duration        => DateTime->now - DateTime->(year => 1990),
+        base64Binary    => IO::File->new($0),
     );
 
 =cut
@@ -152,7 +134,10 @@ classes.
 
 =head2 xs:string
 
-    has 'string'       => ( is => 'rw', isa => 'xs:string' );
+    has 'string'       => (
+        is => 'rw',
+        isa => 'xs:string'
+    );
 
 A wrapper around built-in Str.
 
@@ -164,7 +149,11 @@ subtype 'xs:string' =>
 
 =head2 xs:integer
 
-    has 'integer'      => ( is => 'rw', isa => 'xs:integer', coerce => 1 );
+    has 'integer'      => (
+        is => 'rw',
+        isa => 'xs:integer',
+        coerce => 1
+    );
 
 A L<Math::BigInt> object. Set to coerce from Int.
 
@@ -289,7 +278,10 @@ coerce 'xs:unsignedLong' => from 'Int', via { Math::BigInt->new($_) };
 
 =head2 xs:int
 
-    has 'int' => ( is => 'rw', isa => 'xs:int' );
+    has 'int' => (
+        is => 'rw',
+        isa => 'xs:int'
+    );
 
 A 32-bit integer. Represented natively.
 
@@ -301,7 +293,10 @@ subtype 'xs:int' =>
 
 =head2 xs:unsignedInt
 
-    has 'int' => ( is => 'rw', isa => 'xs:unsignedInt' );
+    has 'unsignedInt' => (
+        is => 'rw',
+        isa => 'xs:unsignedInt'
+    );
 
 A 32-bit integer. Represented natively.
 
@@ -313,7 +308,10 @@ subtype 'xs:unsignedInt' =>
 
 =head2 xs:short
 
-    has 'int' => ( is => 'rw', isa => 'xs:short' );
+    has 'short' => (
+        is => 'rw',
+        isa => 'xs:short'
+    );
 
 A 16-bit integer. Represented natively.
 
@@ -325,7 +323,10 @@ subtype 'xs:short' =>
 
 =head2 xs:unsignedShort
 
-    has 'int' => ( is => 'rw', isa => 'xs:unsignedShort' );
+    has 'unsignedShort' => (
+        is => 'rw',
+        isa => 'xs:unsignedShort'
+    );
 
 A 16-bit integer. Represented natively.
 
@@ -337,7 +338,10 @@ subtype 'xs:unsignedShort' =>
 
 =head2 xs:byte
 
-    has 'int' => ( is => 'rw', isa => 'xs:byte' );
+    has 'byte' => (
+        is => 'rw',
+        isa => 'xs:byte'
+    );
 
 An 8-bit integer. Represented natively.
 
@@ -349,7 +353,10 @@ subtype 'xs:byte' =>
 
 =head2 xs:unsignedByte
 
-    has 'int' => ( is => 'rw', isa => 'xs:unsignedByte' );
+    has 'unsignedByte' => (
+        is => 'rw',
+        isa => 'xs:unsignedByte'
+    );
 
 An 8-bit integer. Represented natively.
 
@@ -361,7 +368,10 @@ subtype 'xs:unsignedByte' =>
 
 =head2 xs:boolean
 
-    has 'boolean'      => ( is => 'rw', isa => 'xs:boolean' );
+    has 'boolean' => (
+        is => 'rw',
+        isa => 'xs:boolean'
+    );
 
 A wrapper around built-in Bool.
 
@@ -373,7 +383,11 @@ subtype 'xs:boolean' =>
 
 =head2 xs:float
 
-    has 'float'        => ( is => 'rw', isa => 'xs:float' );
+    has 'float' => (
+        is => 'rw',
+        isa => 'xs:float',
+        coerce => 1,
+    );
 
 A 64-bit Float. Represented as a L<Math::BigFloat> object, but limited to the
 64-bit (unsigned) range.
@@ -387,7 +401,11 @@ coerce 'xs:float' => from 'Num', via { Math::BigFloat->new($_) };
 
 =head2 xs:double
 
-    has 'double'       => ( is => 'rw', isa => 'xs:double' );
+    has 'double' => (
+        is => 'rw',
+        isa => 'xs:double',
+        coerce => 1,
+    );
 
 A 64-bit Float. Represented as a L<Math::BigFloat> object, but limited to the
 64-bit (unsigned) range. Set to coerce from Num.
@@ -401,7 +419,11 @@ coerce 'xs:double' => from 'Num', via { Math::BigFloat->new($_) };
 
 =head2 xs:decimal
 
-    has 'decimal'      => ( is => 'rw', isa => 'xs:decimal' );
+    has 'decimal' => (
+        is => 'rw',
+        isa => 'xs:decimal',
+        coerce => 1,
+    );
 
 A 64-bit Float. Represented as a L<Math::BigFloat> object, but limited to the
 64-bit (unsigned) range. Set to coerce from Num.
@@ -416,8 +438,11 @@ coerce 'xs:decimal' => from 'Num', via { Math::BigFloat->new($_) };
 
 =head2 xs:duration
 
-    has 'duration'     => ( is => 'rw', isa => 'xs:duration' );
-    has 'duration_dt'  => ( is => 'rw', isa => 'xs:duration', coerce => 1 );
+    has 'duration' => (
+        is => 'rw',
+        isa => 'xs:duration',
+        coerce => 1,
+    );
 
 A wrapper around Str.
 If you enable coerce you can pass a DateTime::Duration object.
@@ -459,8 +484,11 @@ coerce 'xs:duration'
 
 =head2 xs:dateTime
 
-    has 'datetime'    => ( is => 'rw', isa => 'xs:dateTime' );
-    has 'datetime_dt' => ( is => 'rw', isa => 'xs:dateTime', coerce => 1 );
+    has 'datetime' => (
+        is => 'rw',
+        isa => 'xs:dateTime',
+        coerce => 1
+    );
 
 A wrapper around Str.
 If you enable coerce you can pass a DateTime object.
@@ -492,8 +520,11 @@ coerce 'xs:dateTime'
 
 =head2 xs:time
 
-    has 'time'    => ( is => 'rw', isa => 'xs:time' );
-    has 'time_dt' => ( is => 'rw', isa => 'xs:time', coerce => 1 );
+    has 'time' => (
+        is => 'rw',
+        isa => 'xs:time',
+        coerce => 1
+    );
 
 A wrapper around Str.
 If you enable coerce you can pass a DateTime object.
@@ -524,8 +555,11 @@ coerce 'xs:time'
 
 =head2 xs:date
 
-    has 'date'     => ( is => 'rw', isa => 'xs:date' );
-    has 'date_dt'  => ( is => 'rw', isa => 'xs:date', coerce => 1 );
+    has 'date'  => (
+        is => 'rw',
+        isa => 'xs:date',
+        coerce => 1
+    );
 
 A wrapper around Str.
 If you enable coerce you can pass a DateTime object.
@@ -545,8 +579,11 @@ coerce 'xs:date'
 
 =head2 xs:gYearMonth
 
-    has 'gYearMonth'    => ( is => 'rw', isa => 'xs:gYearMonth' );
-    has 'gYearMonth_dt' => ( is => 'rw', isa => 'xs:gYearMonth', coerce => 1 );
+    has 'gYearMonth' => (
+        is => 'rw',
+        isa => 'xs:gYearMonth',
+        coerce => 1
+    );
 
 A wrapper around Str.
 If you enable coerce you can pass a DateTime object or a ArrayRef of two
@@ -576,8 +613,11 @@ coerce 'xs:gYearMonth'
 
 =head2 xs:gYear
 
-    has 'gYear'    => ( is => 'rw', isa => 'xs:gYear' );
-    has 'gYear_dt' => ( is => 'rw', isa => 'xs:gYear', coerce => 1 );
+    has 'gYear' => (
+        is => 'rw',
+        isa => 'xs:gYear',
+        coerce => 1
+    );
 
 A wrapper around Str.
 If you enable coerce you can pass a DateTime object.
@@ -597,8 +637,11 @@ coerce 'xs:gYear'
 
 =head2 xs:gMonthDay
 
-    has 'gMonthDay'        => ( is => 'rw', isa => 'xs:gMonthDay' );
-    has 'gMonthDay_dt' => ( is => 'rw', isa => 'xs:gMonthDay', coerce => 1 );
+    has 'gMonthDay' => (
+        is => 'rw',
+        isa => 'xs:gMonthDay',
+        coerce => 1
+    );
 
 A wrapper around Str.
 If you enable coerce you can pass a DateTime object or a ArrayRef of two
@@ -623,8 +666,11 @@ coerce 'xs:gMonthDay'
 
 =head2 xs:gDay
 
-    has 'gDay'         => ( is => 'rw', isa => 'xs:gDay' );
-    has 'gDay_dt_int'  => ( is => 'rw', isa => 'xs:gDay', coerce => 1 );
+    has 'gDay' => (
+        is => 'rw',
+        isa => 'xs:gDay',
+        coerce => 1
+    );
 
 A wrapper around Str.
 If you enable coerce you can pass a DateTime object or Int eg. 24.
@@ -648,8 +694,11 @@ coerce 'xs:gDay'
 
 =head2 xs:gMonth
 
-    has 'gMonth'        => ( is => 'rw', isa => 'xs:gMonth', coerce => 1 );
-    has 'gMonth_dt_int' => ( is => 'rw', isa => 'xs:gMonth', coerce => 1 );
+    has 'gMonth' => (
+        is => 'rw',
+        isa => 'xs:gMonth',
+        coerce => 1
+    );
 
 A wrapper around Str.
 If you enable coerce you can pass a DateTime object or Int eg. 10.
@@ -673,8 +722,11 @@ coerce 'xs:gMonth'
 
 =head2 xs:base64Binary
 
-    has 'base64Binary'    => ( is => 'rw', isa => 'xs:base64Binary' );
-    has 'base64Binary_io' => ( is => 'rw', isa => 'xs:base64Binary', coerce => 1 );
+    has 'base64Binary' => (
+        is => 'rw',
+        isa => 'xs:base64Binary',
+        coerce => 1
+    );
 
 A wrapper around Str.
 If you enable coerce you can pass a IO::Handle object - the content of the
@@ -697,8 +749,11 @@ coerce 'xs:base64Binary'
 
 =head2 xs:anyURI
 
-    has 'anyURI'     => ( is => 'rw', isa => 'xs:anyURI' );
-    has 'anyURI_uri' => ( is => 'rw', isa => 'xs:anyURI', coerce => 1 );
+    has 'anyURI' => (
+        is => 'rw',
+        isa => 'xs:anyURI',
+        coerce => 1
+    );
 
 A wrapper around Str.
 If you enable coerce you can pass a URI object.
