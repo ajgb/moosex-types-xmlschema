@@ -155,7 +155,7 @@ subtype 'xs:string' =>
         coerce => 1
     );
 
-A L<Math::BigInt> object. Set to coerce from Int.
+A L<Math::BigInt> object. Set to coerce from Int/Str.
 
 This is defined in XSchema to be an arbitrary size integer.
 
@@ -177,7 +177,7 @@ coerce 'xs:integer'
         coerce => 1,
     );
 
-A L<Math::BigInt> object. Set to coerce from Int.
+A L<Math::BigInt> object. Set to coerce from Int/Str.
 
 This is defined in XSchema to be an arbitrary size integer greater than zero.
 
@@ -196,7 +196,7 @@ coerce 'xs:positiveInteger'
         coerce => 1,
     );
 
-A L<Math::BigInt> object. Set to coerce from Int.
+A L<Math::BigInt> object. Set to coerce from Int/Str.
 
 This is defined in XSchema to be an arbitrary size integer less than or equal
 to zero.
@@ -216,7 +216,7 @@ coerce 'xs:nonPositiveInteger'
         coerce => 1,
     );
 
-A L<Math::BigInt> object. Set to coerce from Int.
+A L<Math::BigInt> object. Set to coerce from Int/Str.
 
 This is defined in XSchema to be an arbitrary size integer less than zero.
 
@@ -236,7 +236,7 @@ coerce 'xs:negativeInteger'
     );
 
 
-A L<Math::BigInt> object. Set to coerce from Int.
+A L<Math::BigInt> object. Set to coerce from Int/Str.
 
 This is defined in XSchema to be an arbitrary size integer greater than or
 equal to zero.
@@ -259,7 +259,7 @@ coerce 'xs:nonNegativeInteger'
     );
 
 A 64-bit Integer. Represented as a L<Math::Bigint> object, but limited to the
-64-bit (signed) range. Set to coerce from Int.
+64-bit (signed) range. Set to coerce from Int/Str.
 
 =cut
 
@@ -284,7 +284,7 @@ A 64-bit Integer. Represented as a L<Math::Bigint> object, but limited to the
     );
 
 A 64-bit Integer. Represented as a L<Math::Bigint> object, but limited to the
-64-bit (unsigned) range. Set to coerce from Int.
+64-bit (unsigned) range. Set to coerce from Int/Str.
 
 =cut
 
@@ -412,17 +412,23 @@ subtype 'xs:boolean' =>
         coerce => 1,
     );
 
-A 64-bit Float. Represented as a L<Math::BigFloat> object, but limited to the
-64-bit (unsigned) range.
+A single-precision 32-bit Float. Represented as a L<Math::BigFloat> object, but limited to the
+32-bit range. Set to coerce from Num/Str.
 
 =cut
 
-subtype 'xs:float' =>
-    as 'Math::BigFloat',
-    where { ! $_->is_nan && ! $_->is_inf };
-coerce 'xs:float'
-    => from 'Num', via { Math::BigFloat->new($_) }
-    => from 'Str', via { Math::BigFloat->new($_) };
+{
+    my $m = Math::BigFloat->new(2 ** 24);
+    my $min = $m * Math::BigFloat->new(2 ** -149);
+    my $max = $m * Math::BigFloat->new(2 ** 104);
+
+    subtype 'xs:float' =>
+        as 'Math::BigFloat',
+            where { $_->is_nan || $_->is_inf || ( $_ <= $max && $_ >= $min ) };
+    coerce 'xs:float'
+        => from 'Num', via { Math::BigFloat->new($_) }
+        => from 'Str', via { Math::BigFloat->new($_) };
+}
 
 =head2 xs:double
 
@@ -432,17 +438,23 @@ coerce 'xs:float'
         coerce => 1,
     );
 
-A 64-bit Float. Represented as a L<Math::BigFloat> object, but limited to the
-64-bit (unsigned) range. Set to coerce from Num.
+A double-precision 64-bit Float. Represented as a L<Math::BigFloat> object, but limited to the
+64-bit range. Set to coerce from Num/Str.
 
 =cut
 
-subtype 'xs:double' =>
-    as 'Math::BigFloat',
-    where { ! $_->is_nan && ! $_->is_inf };
-coerce 'xs:double'
-    => from 'Num', via { Math::BigFloat->new($_) }
-    => from 'Str', via { Math::BigFloat->new($_) };
+{
+    my $m = Math::BigFloat->new(2 ** 53);
+    my $min = $m * Math::BigFloat->new(2 ** -1075);
+    my $max = $m * Math::BigFloat->new(2 ** 970);
+
+    subtype 'xs:double' =>
+        as 'Math::BigFloat',
+            where { $_->is_nan || $_->is_inf || ( $_ < $max && $_ > $min ) };
+    coerce 'xs:double'
+        => from 'Num', via { Math::BigFloat->new($_) }
+        => from 'Str', via { Math::BigFloat->new($_) };
+}
 
 =head2 xs:decimal
 
@@ -452,8 +464,7 @@ coerce 'xs:double'
         coerce => 1,
     );
 
-A 64-bit Float. Represented as a L<Math::BigFloat> object, but limited to the
-64-bit (unsigned) range. Set to coerce from Num.
+Any base-10 fixed-point number. Represented as a L<Math::BigFloat> object. Set to coerce from Num/Str.
 
 =cut
 
