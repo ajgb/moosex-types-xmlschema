@@ -120,7 +120,7 @@ subtest "xs:float" => sub {
     is $o->float_co, 123.4567, '...value correct';
     lives_ok { $o->float( Math::BigFloat->new(12.78e-2) ) } 'valid xs:float <- Math::BigFloat(12.78e-2)';
     is $o->float, 12.78e-2, '...value correct';
-    dies_ok { $o->float_co( '12.78f-2') } 'invalid xs:float <- 12.78f-2';
+    lives_ok { $o->float_co( '12.78f-2') } 'valid xs:float <- NaN';
 };
 
 subtest "xs:double" => sub {
@@ -131,7 +131,7 @@ subtest "xs:double" => sub {
     is $o->double, 123.4567, '...value correct';
     lives_ok { $o->double( Math::BigFloat->new(12.78e-2) ) } 'valid xs:double <- Math::BigFloat(12.78e-2)';
     is $o->double, 12.78e-2, '...value correct';
-    dies_ok { $o->double( Math::BigFloat->new('12.78f-2') ) } 'invalid xs:double <- 12.78f-2';
+    lives_ok { $o->double( Math::BigFloat->new('12.78f-2') ) } 'valid xs:double <- NaN';
 };
 
 subtest "xs:decimal" => sub {
