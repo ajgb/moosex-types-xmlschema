@@ -2,7 +2,7 @@
 use strict;
 use warnings;
 
-use Test::More tests => 24;
+use Test::More tests => 31;
 use Test::Exception;
 
 use Math::BigFloat;
@@ -62,6 +62,14 @@ use URI;
     has 'nonNegativeInteger' => ( is => 'rw', isa => 'xs:nonNegativeInteger', coerce => 1 );
     has 'negativeInteger'    => ( is => 'rw', isa => 'xs:negativeInteger', coerce => 1 );
 
+    has 'byte'         => ( is => 'rw', isa => 'xs:byte' );
+    has 'short'        => ( is => 'rw', isa => 'xs:short' );
+    has 'long'             => ( is => 'rw', isa => 'xs:long', coerce => 1 );
+
+    has 'unsignedByte'    => ( is => 'rw', isa => 'xs:unsignedByte' );
+    has 'unsignedShort'   => ( is => 'rw', isa => 'xs:unsignedShort' );
+    has 'unsignedInt'     => ( is => 'rw', isa => 'xs:unsignedInt' );
+    has 'unsignedLong'     => ( is => 'rw', isa => 'xs:unsignedLong', coerce => 1 );
 }
 
 my $o;
@@ -73,13 +81,6 @@ subtest "xs:string" => sub {
     plan tests => 2;
     lives_ok { $o->string('text value') } 'valid xs:string <- text';
     is $o->string, 'text value', '...value correct';
-};
-
-subtest "xs:int" => sub {
-    plan tests => 3;
-    lives_ok { $o->int(123) } 'valid xs:int<- 123';
-    is $o->int, 123, '...value correct';
-    dies_ok { $o->int('text') } 'invalid xs:int<- text';
 };
 
 subtest "xs:integer" => sub {
@@ -359,4 +360,83 @@ subtest "xs:negativeInteger" => sub {
     dies_ok { $o->negativeInteger( 123 ) } 'invalid xs:negativeInteger <- Int';
 };
 
+subtest "xs:byte" => sub {
+    plan tests => 6;
+    lives_ok { $o->byte( -128 ) } 'valid xs:byte';
+    is $o->byte, -128, '...value correct';
+    lives_ok { $o->byte( 127 ) } 'valid xs:byte';
+    is $o->byte, 127, '...value correct';
+    dies_ok { $o->byte( -129 ) } 'invalid xs:byte';
+    dies_ok { $o->byte( 128 ) } 'invalid xs:byte';
+};
+
+subtest "xs:short" => sub {
+    plan tests => 6;
+    lives_ok { $o->short( -32768 ) } 'valid xs:short';
+    is $o->short, -32768, '...value correct';
+    lives_ok { $o->short( 32767 ) } 'valid xs:short';
+    is $o->short, 32767, '...value correct';
+    dies_ok { $o->short( -32769 ) } 'invalid xs:short';
+    dies_ok { $o->short( 32768 ) } 'invalid xs:short';
+};
+
+subtest "xs:int" => sub {
+    plan tests => 6;
+    lives_ok { $o->int( -2147483648 ) } 'valid xs:int';
+    is $o->int, -2147483648, '...value correct';
+    lives_ok { $o->int( 2147483647 ) } 'valid xs:int';
+    is $o->int, 2147483647, '...value correct';
+    dies_ok { $o->int( -2147483649 ) } 'invalid xs:int';
+    dies_ok { $o->int( 2147483648 ) } 'invalid xs:int';
+};
+
+subtest "xs:long" => sub {
+    plan tests => 6;
+    lives_ok { $o->long( '-9223372036854775808' ) } 'valid xs:long';
+    is $o->long, '-9223372036854775808', '...value correct';
+    lives_ok { $o->long( '9223372036854775807' ) } 'valid xs:long';
+    is $o->long, '9223372036854775807', '...value correct';
+    dies_ok { $o->long( '-9223372036854775809' ) } 'invalid xs:long';
+    dies_ok { $o->long( '9223372036854775808' ) } 'invalid xs:long';
+};
+
+subtest "xs:unsignedByte" => sub {
+    plan tests => 6;
+    lives_ok { $o->unsignedByte( 0 ) } 'valid xs:unsignedByte';
+    is $o->unsignedByte, 0, '...value correct';
+    lives_ok { $o->unsignedByte( 255 ) } 'valid xs:unsignedByte';
+    is $o->unsignedByte, 255, '...value correct';
+    dies_ok { $o->unsignedByte( -1 ) } 'invalid xs:unsignedByte';
+    dies_ok { $o->unsignedByte( 256 ) } 'invalid xs:unsignedByte';
+};
+
+subtest "xs:unsignedShort" => sub {
+    plan tests => 6;
+    lives_ok { $o->unsignedShort( 0 ) } 'valid xs:unsignedShort';
+    is $o->unsignedShort, 0, '...value correct';
+    lives_ok { $o->unsignedShort( 65535 ) } 'valid xs:unsignedShort';
+    is $o->unsignedShort, 65535, '...value correct';
+    dies_ok { $o->unsignedShort( -1 ) } 'invalid xs:unsignedShort';
+    dies_ok { $o->unsignedShort( 65536 ) } 'invalid xs:unsignedShort';
+};
+
+subtest "xs:unsignedInt" => sub {
+    plan tests => 6;
+    lives_ok { $o->unsignedInt( 0 ) } 'valid xs:unsignedInt';
+    is $o->unsignedInt, 0, '...value correct';
+    lives_ok { $o->unsignedInt( 4294967295 ) } 'valid xs:unsignedInt';
+    is $o->unsignedInt, 4294967295, '...value correct';
+    dies_ok { $o->unsignedInt( -1 ) } 'invalid xs:unsignedInt';
+    dies_ok { $o->unsignedInt( 4294967296 ) } 'invalid xs:unsignedInt';
+};
+
+subtest "xs:unsignedLong" => sub {
+    plan tests => 6;
+    lives_ok { $o->unsignedLong( 0 ) } 'valid xs:unsignedLong';
+    is $o->unsignedLong, 0, '...value correct';
+    lives_ok { $o->unsignedLong( '18446744073709551615' ) } 'valid xs:unsignedLong';
+    is $o->unsignedLong, '18446744073709551615', '...value correct';
+    dies_ok { $o->unsignedLong( -1 ) } 'invalid xs:unsignedLong';
+    dies_ok { $o->unsignedLong( '18446744073709551616' ) } 'invalid xs:unsignedLong';
+};
 
