@@ -165,7 +165,9 @@ subtype 'xs:integer' =>
     as 'Math::BigInt',
     where { ! $_->is_nan && ! $_->is_inf };
 
-coerce 'xs:integer' => from 'Int', via { Math::BigInt->new($_) };
+coerce 'xs:integer'
+    => from 'Int', via { Math::BigInt->new($_) }
+    => from 'Str', via { Math::BigInt->new($_) };
 
 =head2 xs:positiveInteger
 
@@ -182,7 +184,9 @@ This is defined in XSchema to be an arbitrary size integer greater than zero.
 =cut
 
 subtype 'xs:positiveInteger' => as 'Math::BigInt', where { $_ > 0 };
-coerce 'xs:positiveInteger' => from 'Int', via { Math::BigInt->new($_) };
+coerce 'xs:positiveInteger'
+    => from 'Int', via { Math::BigInt->new($_) }
+    => from 'Str', via { Math::BigInt->new($_) };
 
 =head2 xs:nonPositiveInteger
 
@@ -200,7 +204,9 @@ to zero.
 =cut
 
 subtype 'xs:nonPositiveInteger' => as 'Math::BigInt', where { $_ <= 0 };
-coerce 'xs:nonPositiveInteger' => from 'Int', via { Math::BigInt->new($_) };
+coerce 'xs:nonPositiveInteger'
+    => from 'Int', via { Math::BigInt->new($_) }
+    => from 'Str', via { Math::BigInt->new($_) };
 
 =head2 xs:negativeInteger
 
@@ -217,7 +223,9 @@ This is defined in XSchema to be an arbitrary size integer less than zero.
 =cut
 
 subtype 'xs:negativeInteger' => as 'Math::BigInt', where { $_ < 0 };
-coerce 'xs:negativeInteger' => from 'Int', via { Math::BigInt->new($_) };
+coerce 'xs:negativeInteger'
+    => from 'Int', via { Math::BigInt->new($_) }
+    => from 'Str', via { Math::BigInt->new($_) };
 
 =head2 xs:nonNegativeInteger
 
@@ -238,7 +246,9 @@ equal to zero.
 subtype 'xs:nonNegativeInteger' =>
     as 'Math::BigInt',
         where { $_ >= 0 };
-coerce 'xs:nonNegativeInteger' => from 'Int', via { Math::BigInt->new($_) };
+coerce 'xs:nonNegativeInteger'
+    => from 'Int', via { Math::BigInt->new($_) }
+    => from 'Str', via { Math::BigInt->new($_) };
 
 =head2 xs:long
 
@@ -253,10 +263,17 @@ A 64-bit Integer. Represented as a L<Math::Bigint> object, but limited to the
 
 =cut
 
-subtype 'xs:long' =>
-    as 'Math::BigInt',
-        where { $_ <= 9223372036854775807 && $_ > -9223372036854775808 };
-coerce 'xs:long' => from 'Int', via { Math::BigInt->new($_) };
+{
+    my $min = Math::BigInt->new('-9223372036854775808');
+    my $max = Math::BigInt->new('9223372036854775807');
+
+    subtype 'xs:long' =>
+        as 'Math::BigInt',
+            where { $_ <= $max && $_ >= $min };
+    coerce 'xs:long'
+        => from 'Int', via { Math::BigInt->new($_) }
+        => from 'Str', via { Math::BigInt->new($_) };
+}
 
 =head2 xs:unsignedLong
 
@@ -271,10 +288,16 @@ A 64-bit Integer. Represented as a L<Math::Bigint> object, but limited to the
 
 =cut
 
-subtype 'xs:unsignedLong' =>
-    as 'Math::BigInt',
-        where { $_ >= 0 && $_ <= 18446744073709551615 };
-coerce 'xs:unsignedLong' => from 'Int', via { Math::BigInt->new($_) };
+{
+    my $max = Math::BigInt->new('18446744073709551615');
+
+    subtype 'xs:unsignedLong' =>
+        as 'Math::BigInt',
+            where { $_ >= 0 && $_ <= $max };
+    coerce 'xs:unsignedLong'
+        => from 'Int', via { Math::BigInt->new($_) }
+        => from 'Str', via { Math::BigInt->new($_) };
+}
 
 =head2 xs:int
 
@@ -397,7 +420,9 @@ A 64-bit Float. Represented as a L<Math::BigFloat> object, but limited to the
 subtype 'xs:float' =>
     as 'Math::BigFloat',
     where { ! $_->is_nan && ! $_->is_inf };
-coerce 'xs:float' => from 'Num', via { Math::BigFloat->new($_) };
+coerce 'xs:float'
+    => from 'Num', via { Math::BigFloat->new($_) }
+    => from 'Str', via { Math::BigFloat->new($_) };
 
 =head2 xs:double
 
@@ -415,7 +440,9 @@ A 64-bit Float. Represented as a L<Math::BigFloat> object, but limited to the
 subtype 'xs:double' =>
     as 'Math::BigFloat',
     where { ! $_->is_nan && ! $_->is_inf };
-coerce 'xs:double' => from 'Num', via { Math::BigFloat->new($_) };
+coerce 'xs:double'
+    => from 'Num', via { Math::BigFloat->new($_) }
+    => from 'Str', via { Math::BigFloat->new($_) };
 
 =head2 xs:decimal
 
@@ -433,7 +460,9 @@ A 64-bit Float. Represented as a L<Math::BigFloat> object, but limited to the
 subtype 'xs:decimal' =>
     as 'Math::BigFloat',
     where { ! $_->is_nan && ! $_->is_inf };
-coerce 'xs:decimal' => from 'Num', via { Math::BigFloat->new($_) };
+coerce 'xs:decimal'
+    => from 'Num', via { Math::BigFloat->new($_) }
+    => from 'Str', via { Math::BigFloat->new($_) };
 
 
 =head2 xs:duration
