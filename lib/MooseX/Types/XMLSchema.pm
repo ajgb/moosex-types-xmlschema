@@ -33,10 +33,6 @@ use MooseX::Types -declare => [qw(
     xs:gMonth
     xs:base64Binary
     xs:anyURI
-    xs:nonPositiveInteger
-    xs:negativeInteger
-    xs:nonNegativeInteger
-    xs:positiveInteger
 )];
 use Moose::Util::TypeConstraints;
 use MooseX::Types::Moose qw(
@@ -75,13 +71,19 @@ our $VERSION = '0.04';
     use MooseX::Types::XMLSchema qw( :all );
 
     has 'string'       => ( is => 'rw', isa => 'xs:string' );
-    has 'int'          => ( is => 'rw', isa => 'xs:int' );
-    has 'integer'      => ( is => 'rw', isa => 'xs:integer' );
+
     has 'boolean'      => ( is => 'rw', isa => 'xs:boolean' );
+
+    has 'byte'         => ( is => 'rw', isa => 'xs:byte' );
+    has 'short'        => ( is => 'rw', isa => 'xs:short' );
+    has 'int'          => ( is => 'rw', isa => 'xs:int' );
+    has 'long'         => ( is => 'rw', isa => 'xs:long' );
+    has 'integer'      => ( is => 'rw', isa => 'xs:integer' );
     has 'float'        => ( is => 'rw', isa => 'xs:float' );
     has 'double'       => ( is => 'rw', isa => 'xs:double' );
     has 'decimal'      => ( is => 'rw', isa => 'xs:decimal' );
 
+    has 'long_co'      => ( is => 'rw', isa => 'xs:long', coerce => 1 );
     has 'integer_co'   => ( is => 'rw', isa => 'xs:integer', coerce => 1 );
     has 'float_co'     => ( is => 'rw', isa => 'xs:float', coerce => 1 );
     has 'double_co'    => ( is => 'rw', isa => 'xs:double', coerce => 1 );
@@ -107,16 +109,21 @@ our $VERSION = '0.04';
     has 'gDay_dt'         => ( is => 'rw', isa => 'xs:gDay', coerce => 1 );
     has 'gMonth_dt'       => ( is => 'rw', isa => 'xs:gMonth', coerce => 1 );
 
-    has 'base64Binary' => ( is => 'rw', isa => 'xs:base64Binary' );
+    has 'base64Binary'    => ( is => 'rw', isa => 'xs:base64Binary' );
     has 'base64Binary_io' => ( is => 'rw', isa => 'xs:base64Binary', coerce => 1 );
 
-    has 'anyURI'       => ( is => 'rw', isa => 'xs:anyURI' );
-    has 'anyURI_uri'       => ( is => 'rw', isa => 'xs:anyURI', coerce => 1 );
+    has 'anyURI'            => ( is => 'rw', isa => 'xs:anyURI' );
+    has 'anyURI_uri'        => ( is => 'rw', isa => 'xs:anyURI', coerce => 1 );
 
     has 'nonPositiveInteger' => ( is => 'rw', isa => 'xs:nonPositiveInteger' );
     has 'positiveInteger'    => ( is => 'rw', isa => 'xs:positiveInteger' );
     has 'nonNegativeInteger' => ( is => 'rw', isa => 'xs:nonNegativeInteger' );
     has 'negativeInteger'    => ( is => 'rw', isa => 'xs:negativeInteger' );
+
+    has 'unsignedByte'    => ( is => 'rw', isa => 'xs:unsignedByte' );
+    has 'unsignedShort'   => ( is => 'rw', isa => 'xs:unsignedShort' );
+    has 'unsignedInt'     => ( is => 'rw', isa => 'xs:unsignedInt' );
+    has 'unsignedLong'    => ( is => 'rw', isa => 'xs:unsignedLong' );
 
 Then, elsewhere:
 
@@ -173,7 +180,7 @@ coerce 'xs:integer' => from 'Int', via { Math::BigInt->new($_) };
 
 =head2 xs:positiveInteger
 
-    has 'integer' => (
+    has 'positiveInteger' => (
         is => 'rw',
         isa => 'xs:positiveInteger',
         coerce => 1,
@@ -190,7 +197,7 @@ coerce 'xs:positiveInteger' => from 'Int', via { Math::BigInt->new($_) };
 
 =head2 xs:nonPositiveInteger
 
-    has 'integer' => (
+    has 'nonPositiveInteger' => (
         is => 'rw',
         isa => 'xs:nonPositiveInteger',
         coerce => 1,
@@ -208,7 +215,7 @@ coerce 'xs:nonPositiveInteger' => from 'Int', via { Math::BigInt->new($_) };
 
 =head2 xs:negativeInteger
 
-    has 'integer' => (
+    has 'negativeInteger' => (
         is => 'rw',
         isa => 'xs:negativeInteger',
         coerce => 1,
@@ -225,7 +232,11 @@ coerce 'xs:negativeInteger' => from 'Int', via { Math::BigInt->new($_) };
 
 =head2 xs:nonNegativeInteger
 
-    has 'int' => ( is => 'rw', isa => 'xs:nonNegativeInteger' );
+    has 'nonPositiveInteger' => (
+        is => 'rw',
+        isa => 'xs:nonNegativeInteger',
+        coerce => 1,
+    );
 
 
 A L<Math::BigInt> object. Set to coerce from Int.
@@ -242,7 +253,11 @@ coerce 'xs:nonNegativeInteger' => from 'Int', via { Math::BigInt->new($_) };
 
 =head2 xs:long
 
-    has 'long' => ( is => 'rw', isa => 'xs:long' );
+    has 'long' => (
+        is => 'rw',
+        isa => 'xs:long',
+        coerce => 1,
+    );
 
 A 64-bit Integer. Represented as a L<Math::Bigint> object, but limited to the
 64-bit (signed) range. Set to coerce from Int.
@@ -256,7 +271,11 @@ coerce 'xs:long' => from 'Int', via { Math::BigInt->new($_) };
 
 =head2 xs:unsignedLong
 
-    has 'long' => ( is => 'rw', isa => 'xs:unsignedLong' );
+    has 'unsignedLong' => (
+        is => 'rw',
+        isa => 'xs:unsignedLong',
+        coerce => 1,
+    );
 
 A 64-bit Integer. Represented as a L<Math::Bigint> object, but limited to the
 64-bit (unsigned) range. Set to coerce from Int.
@@ -695,58 +714,6 @@ coerce 'xs:anyURI'
         via {
             return $_->as_string;
         };
-
-
-=head2 xs:nonPositiveInteger
-
-    has 'nonPositiveInteger' => ( is => 'rw', isa => 'xs:nonPositiveInteger' );
-
-A wrapper around built-in Int.
-
-=cut
-
-subtype 'xs:nonPositiveInteger' =>
-    as 'Int' =>
-        where { $_ <= 0 };
-
-
-=head2 xs:negativeInteger
-
-    has 'negativeInteger' => ( is => 'rw', isa => 'xs:negativeInteger' );
-
-A wrapper around built-in Int.
-
-=cut
-
-subtype 'xs:negativeInteger' =>
-    as 'Int' =>
-        where { $_ < 0 };
-
-
-=head2 xs:nonNegativeInteger
-
-    has 'nonNegativeInteger' => ( is => 'rw', isa => 'xs:nonNegativeInteger' );
-
-A wrapper around built-in Int.
-
-=cut
-
-subtype 'xs:nonNegativeInteger' =>
-    as 'Int' =>
-        where { $_ >= 0 };
-
-=head2 xs:positiveInteger
-
-    has 'positiveInteger'    => ( is => 'rw', isa => 'xs:positiveInteger' );
-
-A wrapper around built-in Int.
-
-=cut
-
-subtype 'xs:positiveInteger' =>
-    as 'Int' =>
-        where { $_ > 0 };
-
 
 no Moose::Util::TypeConstraints;
 no Moose;
