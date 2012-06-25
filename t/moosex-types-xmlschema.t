@@ -57,10 +57,10 @@ use URI;
     has 'anyURI'          => ( is => 'rw', isa => 'xs:anyURI' );
     has 'anyURI_uri'      => ( is => 'rw', isa => 'xs:anyURI', coerce => 1 );
 
-    has 'nonPositiveInteger' => ( is => 'rw', isa => 'xs:nonPositiveInteger' );
-    has 'positiveInteger'    => ( is => 'rw', isa => 'xs:positiveInteger' );
-    has 'nonNegativeInteger' => ( is => 'rw', isa => 'xs:nonNegativeInteger' );
-    has 'negativeInteger'    => ( is => 'rw', isa => 'xs:negativeInteger' );
+    has 'nonPositiveInteger' => ( is => 'rw', isa => 'xs:nonPositiveInteger', coerce => 1 );
+    has 'positiveInteger'    => ( is => 'rw', isa => 'xs:positiveInteger', coerce => 1 );
+    has 'nonNegativeInteger' => ( is => 'rw', isa => 'xs:nonNegativeInteger', coerce => 1 );
+    has 'negativeInteger'    => ( is => 'rw', isa => 'xs:negativeInteger', coerce => 1 );
 
 }
 
