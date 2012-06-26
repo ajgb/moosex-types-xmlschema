@@ -12,6 +12,11 @@ Revision history for MooseX-Types-XMLSchema
        xs:nonNegativeInteger are Math::BigInt objects now (due to removing
        their duplicated versions).  
 
+0.05   2012-06-16 00:54:18
+    [rt#77810/gh#1] Allow timezone in xs:date string by IVANWILLS
+    Coerced DateTime object will include timezone in xs:date
+    Added extra tests
+
 0.04    Tue Apr 24 21:49:13 2012
         [rt#76789] Example use of xs:decimal invalid
         Require Math::BigInt and Math::BigFloat.

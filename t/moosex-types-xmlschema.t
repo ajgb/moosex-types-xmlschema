@@ -168,6 +168,9 @@ my $dt2 = DateTime->new( year   => 1964,
 
 subtest "xs:duration" => sub {
     plan tests => 18;
+    my $ldt1 = $dt1->clone;
+    my $ldt2 = $dt2->clone;
+
     dies_ok { $o->duration( '3 years' ) } 'invalid xs:duration <- Str';
     dies_ok { $o->duration( $duration ) } 'invalid xs:duration <- DateTime::Duration';
 
@@ -177,7 +180,7 @@ subtest "xs:duration" => sub {
     lives_ok { $o->duration_co( $duration ) } 'valid xs:duration <- DateTime::Duration';
     is $o->duration_co, 'P3Y0M15DT0H0M37S', '...value correct';
 
-    lives_ok { $o->duration_co( $dt1 - $dt2 ) } 'valid xs:duration <- DateTime1 - DateTime2';
+    lives_ok { $o->duration_co( $ldt1 - $ldt2 ) } 'valid xs:duration <- DateTime1 - DateTime2';
     is $o->duration_co, '-P0Y2M10DT0H23M37S', '...value correct';
 
     my @nanosecs = (
@@ -196,22 +199,24 @@ subtest "xs:duration" => sub {
 };
 
 subtest "xs:datetime" => sub {
-    plan tests => 20;
+    plan tests => 22;
+    my $ldt1 = $dt1->clone;
+
     lives_ok { $o->datetime( '1964-10-16T16:12:47-05:00' ) } 'valid xs:dateTime <- Str';
     is $o->datetime, '1964-10-16T16:12:47-05:00', '...value correct';
 
     lives_ok { $o->datetime( '1964-10-16T16:12:47.123-05:00' ) } 'valid xs:dateTime <- Str';
     is $o->datetime, '1964-10-16T16:12:47.123-05:00', '...value correct';
 
-    lives_ok { $o->datetime_co( $dt1 ) } 'valid xs:dateTime <- DateTime';
+    lives_ok { $o->datetime_co( $ldt1 ) } 'valid xs:dateTime <- DateTime';
     is $o->datetime_co, '1964-10-16T16:12:47-05:00', '...value correct';
 
-    $dt1->set_time_zone('Asia/Tokyo');
-    lives_ok { $o->datetime_co( $dt1 ) } 'valid xs:dateTime <- DateTime(Tokyo)';
+    $ldt1->set_time_zone('Asia/Tokyo');
+    lives_ok { $o->datetime_co( $ldt1 ) } 'valid xs:dateTime <- DateTime(Tokyo)';
     is $o->datetime_co, '1964-10-17T06:12:47+09:00', '...value correct';
 
-    $dt1->set_time_zone('UTC');
-    lives_ok { $o->datetime_co( $dt1 ) } 'valid xs:dateTime <- DateTime(UTC)';
+    $ldt1->set_time_zone('UTC');
+    lives_ok { $o->datetime_co( $ldt1 ) } 'valid xs:dateTime <- DateTime(UTC)';
     is $o->datetime_co, '1964-10-16T21:12:47Z', '...value correct';
 
     my @nanosecs = (
@@ -222,23 +227,29 @@ subtest "xs:datetime" => sub {
         '1230000000' => '1964-10-16T21:12:48.23Z',
     );
     while ( my ($ns, $expected) = splice(@nanosecs,0, 2) ) {
-        my $ns_dt = $dt1->clone;
+        my $ns_dt = $ldt1->clone;
         $ns_dt->set_nanosecond( $ns );
         lives_ok { $o->datetime_co( $ns_dt ) } 'valid xs:dateTime <- DateTime (with ns)';
         is $o->datetime_co, $expected, '...value correct';
     }
+
+    $ldt1->set_time_zone('floating');
+    lives_ok { $o->datetime_co( $ldt1 ) } 'valid xs:dateTime <- DateTime(floating)';
+    is $o->datetime_co, '1964-10-16T21:12:47', '...value correct';
 };
 
 subtest "xs:time" => sub {
-    plan tests => 16;
+    plan tests => 20;
+    my $ldt1 = $dt1->clone;
+
     lives_ok { $o->time( '06:12:47+09:00' ) } 'valid xs:time <- Str';
     is $o->time, '06:12:47+09:00', '...value correct';
 
     lives_ok { $o->time( '06:12:47.123+09:00' ) } 'valid xs:time <- Str';
     is $o->time, '06:12:47.123+09:00', '...value correct';
 
-    $dt1->set_time_zone('Asia/Tokyo');
-    lives_ok { $o->time_co( $dt1 ) } 'valid xs:time <- DateTime';
+    $ldt1->set_time_zone('Asia/Tokyo');
+    lives_ok { $o->time_co( $ldt1 ) } 'valid xs:time <- DateTime(Tokyo)';
     is $o->time_co, '06:12:47+09:00', '...value correct';
 
     my @nanosecs = (
@@ -249,65 +260,99 @@ subtest "xs:time" => sub {
         '1230000000' => '06:12:48.23+09:00',
     );
     while ( my ($ns, $expected) = splice(@nanosecs,0, 2) ) {
-        my $ns_dt = $dt1->clone;
+        my $ns_dt = $ldt1->clone;
         $ns_dt->set_nanosecond( $ns );
         lives_ok { $o->time_co( $ns_dt ) } 'valid xs:time <- DateTime (with ns)';
         is $o->time_co, $expected, '...value correct';
     }
+
+    $ldt1->set_time_zone('UTC');
+    lives_ok { $o->time_co( $ldt1 ) } 'valid xs:time <- DateTime(UTC)';
+    is $o->time_co, '21:12:47Z', '...value correct';
+
+    $ldt1->set_time_zone('floating');
+    lives_ok { $o->time_co( $ldt1 ) } 'valid xs:time <- DateTime(floating)';
+    is $o->time_co, '21:12:47', '...value correct';
 };
 
 subtest "xs:date" => sub {
-    plan tests => 4;
+    plan tests => 12;
+    my $ldt1 = $dt1->clone;
+
     lives_ok { $o->date( '1964-10-16' ) } 'valid xs:date <- Str';
     is $o->date, '1964-10-16', '...value correct';
-    $dt1->set_time_zone('UTC');
-    lives_ok { $o->date_co( $dt1 ) } 'valid xs:date <- DateTime';
+
+    $ldt1->set_time_zone('Asia/Tokyo');
+    lives_ok { $o->date_co( $ldt1 ) } 'valid xs:date <- DateTime(Tokyo)';
+    is $o->date_co, '1964-10-17+09:00', '...value correct';
+
+    $ldt1->set_time_zone('UTC');
+    lives_ok { $o->date_co( $ldt1 ) } 'valid xs:date <- DateTime(UTC)';
+    is $o->date_co, '1964-10-16Z', '...value correct';
+
+    $ldt1->set_time_zone('floating');
+    lives_ok { $o->date_co( $ldt1 ) } 'valid xs:date <- DateTime(floating)';
     is $o->date_co, '1964-10-16', '...value correct';
+
+    lives_ok { $o->date( '1964-10-16+10:00' ) } 'valid xs:date <- Str with +ve timezone';
+    is $o->date, '1964-10-16+10:00', '...value correct';
+    lives_ok { $o->date( '1964-10-16-06:15' ) } 'valid xs:date <- Str with -ve timezone';
+    is $o->date, '1964-10-16-06:15', '...value correct';
 };
 
 subtest "xs:gYearMonth" => sub {
     plan tests => 6;
+    my $ldt1 = $dt1->clone;
+
     lives_ok { $o->gYearMonth( '1964-10' ) } 'valid xs:gYearMonth <- Str';
     is $o->gYearMonth, '1964-10', '...value correct';
     lives_ok { $o->gYearMonth_co( [1856, 4] ) } 'valid xs:gYearMonth <- ArrayRef';
     is $o->gYearMonth_co, '1856-04', '...value correct';
-    lives_ok { $o->gYearMonth_co( $dt1 ) } 'valid xs:gYearMonth <- DateTime';
+    lives_ok { $o->gYearMonth_co( $ldt1 ) } 'valid xs:gYearMonth <- DateTime';
     is $o->gYearMonth_co, '1964-10', '...value correct';
 };
 
 subtest "xs:gYear" => sub {
     plan tests => 4;
+    my $ldt1 = $dt1->clone;
+
     lives_ok { $o->gYear( '1964' ) } 'valid xs:gYear <- Str';
     is $o->gYear, '1964', '...value correct';
-    lives_ok { $o->gYear_co( $dt1 ) } 'valid xs:gYear <- DateTime';
+    lives_ok { $o->gYear_co( $ldt1 ) } 'valid xs:gYear <- DateTime';
     is $o->gYear_co, '1964', '...value correct';
 };
 
 subtest "xs:gMonthDay" => sub {
     plan tests => 6;
+    my $ldt1 = $dt1->clone;
+
     lives_ok { $o->gMonthDay( '--10-16' ) } 'valid xs:gMonthDay <- Str';
     is $o->gMonthDay, '--10-16', '...value correct';
     lives_ok { $o->gMonthDay_co( [4, 3] ) } 'valid xs:gMonthDay <- ArrayRef';
     is $o->gMonthDay_co, '--04-03', '...value correct';
-    lives_ok { $o->gMonthDay_co( $dt1 ) } 'valid xs:gMonthDay <- DateTime';
+    lives_ok { $o->gMonthDay_co( $ldt1 ) } 'valid xs:gMonthDay <- DateTime';
     is $o->gMonthDay_co, '--10-16', '...value correct';
 };
 
 subtest "xs:gDay" => sub {
     plan tests => 6;
+    my $ldt1 = $dt1->clone;
+
     lives_ok { $o->gDay( '---16' ) } 'valid xs:gDay <- Str';
     is $o->gDay, '---16', '...value correct';
     lives_ok { $o->gDay_co( 16 ) } 'valid xs:gDay <- Int';
     is $o->gDay_co, '---16', '...value correct';
-    lives_ok { $o->gDay_co( $dt1 ) } 'valid xs:gDay <- DateTime';
+    lives_ok { $o->gDay_co( $ldt1 ) } 'valid xs:gDay <- DateTime';
     is $o->gDay_co, '---16', '...value correct';
 };
 
 subtest "xs:gMonth" => sub {
     plan tests => 4;
+    my $ldt1 = $dt1->clone;
+
     lives_ok { $o->gMonth( '--10' ) } 'valid xs:gMonth <- Str';
     is $o->gMonth, '--10', '...value correct';
-    lives_ok { $o->gMonth_co( $dt1 ) } 'valid xs:gMonth <- DateTime';
+    lives_ok { $o->gMonth_co( $ldt1 ) } 'valid xs:gMonth <- DateTime';
     is $o->gMonth_co, '--10', '...value correct';
 
 };
