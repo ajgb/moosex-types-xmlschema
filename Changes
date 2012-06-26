@@ -1,6 +1,8 @@
 Revision history for MooseX-Types-XMLSchema
 
 {{$NEXT}}
+
+0.06   2012-06-26 01:13:22
     FIXES:
         [rt#77879] Fix typo in xs:dateTime pod.
     ENHANCEMENTS:
